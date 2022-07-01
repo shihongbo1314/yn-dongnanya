@@ -33,7 +33,8 @@
         <el-dialog
             :modal='false'
             :visible.sync="dialogVisible"
-            width="87%"
+            width='100%'
+            top='0'
             :close-on-click-modal="false"
         >
             <div
@@ -80,6 +81,7 @@
 <script>
 // @ is an alias to /src
 import { parseTime, Fungetdate } from "@/utils/index";
+import { getImgList } from "@/api/Sv2";
 export default {
     name: "Timeline",
     props: {
@@ -148,21 +150,40 @@ export default {
             timeList: [],
         };
     },
+    created(){
+        this.InitTimeline()//初始化时间轴
+    },
     mounted() {
+        // 初始化全选
         if (this.radio == 3) {
             this.cardList.map((item) => {
                 item.checked = true;
             });
         }
-        for (let i = 0; i <= 45; i++) {
-            let time = Fungetdate(i).split("-")[1];
-            this.timeList.push(time);
-        }
+        // test 测试接口
+        getImgList({
+            startDate: 20220523,
+            endDate: 20220523,
+            element: "pre",
+            city: "china",
+            count: 7,
+            day: 7,
+            type: "s2s",
+        }).then((res) => {
+            console.log(res);
+        });
     },
     methods: {
+        InitTimeline() {
+            for (let i = 0; i <= 45; i++) {
+                let time = Fungetdate(i).split("-")[1];
+                this.timeList.push(time);
+            }
+        },
         pointClick(ind) {
             this.active = ind;
         },
+        // 时间间隔change事件
         changeSelect() {
             this.timeList = [];
             this.value =
@@ -209,6 +230,7 @@ export default {
                     break;
             }
         },
+        // 切换
         Bigbutton() {
             this.dialogVisible = !this.dialogVisible;
         },
@@ -231,7 +253,6 @@ export default {
     display: flex;
     align-items: center;
     height: 56px;
-    width: 87%;
     background: rgba(0, 18, 77, 0.6);
     border-radius: 0px 4px 4px 4px;
     position: absolute;
@@ -273,7 +294,7 @@ export default {
         background: rgba(255, 255, 255, 0.2);
         border-radius: 4px 4px 4px 4px;
         height: 24px;
-        margin-left: 15px;
+        margin-left: 5px;
         cursor: pointer;
         span {
             width: 28px;
@@ -313,6 +334,7 @@ export default {
         color: #fff;
         background: #2981ff;
         margin-left: 20px;
+        margin-right: 15px;
         border-radius: 4px;
         padding: 0;
         border: none;
@@ -340,9 +362,7 @@ export default {
         }
     }
     ::v-deep.el-dialog {
-        margin-top: 80px !important;
-        margin-bottom: 0;
-        margin-left: 235px !important;
+        margin: 0;
         box-shadow: none !important;
         .el-radio-group {
             line-height: 45px;
@@ -427,6 +447,9 @@ export default {
     }
     ::v-deep .el-dialog__wrapper {
         bottom: 69px;
+        left: 235px;
+        top: 80px;
+        right: 15px;
     }
     .active {
         width: 28px;
